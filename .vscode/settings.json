@@ -1,0 +1,12 @@
+{
+  "launch": {
+    
+    //un comment for enable auto complete
+    // "configurations": [],
+    // "compounds": []
+    //comment for disenable auto complete
+    "editor.autoClosingBrackets": false,
+    "editor.suggestOnTriggerCharacters": false,
+
+  }
+}
