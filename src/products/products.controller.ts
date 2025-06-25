@@ -1,12 +1,22 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  NotFoundException,
+  Put,
+  Delete
+} from '@nestjs/common';
 type Products = {
   id: number;
   title: string;
   price: number;
 };
 import { CreateProductDto } from './dtos/create-product.dto';
+import { UpdateProductDto } from './dtos/update-product.dto';
 
-@Controller()
+@Controller('api/products')
 export class ProductsController {
   // GET: http://localhost:5000/api/products
   // GET: ~/api/products
@@ -16,21 +26,70 @@ export class ProductsController {
     { id: 3, title: 'laptop', price: 400 },
   ];
 
-  @Post('api/products')
+  @Post()
   public createProduct(@Body() body: CreateProductDto) {
     //    console.log(body);
     //    return body;
     const newProduct: Products = {
       id: this.products.length + 1,
       title: body.title,
-      price: body.price
+      price: body.price,
     };
     this.products.push(newProduct);
     return newProduct;
   }
-
-  @Get('/api/products')
+  // GET: ~/api/products
+  @Get()
   public getAllProducts() {
     return this.products;
   }
+
+  // // GET: ~/api/products
+  // @Get('/api/products/:id')
+  // public getsingleProducts(@Param() param:any) {
+  //   console.log(param);
+  //   return 'ok'
+  // }
+
+  //object destructuring
+  // @Get('/api/products/:id')
+  // public getsingleProducts(@Param('id') id: string) {
+  //   console.log(id);
+  //   return 'ok';
+  // }
+
+  @Get('/:id')
+  public getsingleProducts(@Param('id') id: string) {
+    const product = this.products.find((p) => p.id === parseInt(id));
+    if (!product)
+      throw new NotFoundException(`product not found ${id}`, {
+        description: 'this is description',
+      });
+    return product;
+  }
+  //PUT :~/api/product/:id
+  @Put(':id')
+  public updateProduct(
+    @Param('id') id: string,
+    @Body() body: UpdateProductDto,
+  ) {
+    const product = this.products.find((p) => p.id === parseInt(id));
+    if (!product)throw new NotFoundException(`product not found ${id}`, {
+        description: 'this is description',
+      });
+    console.log(body);
+    return { message: 'product updated successfully wit id '+ id };
+  }
+
+
+@Delete(':id')
+public deleteproduct(@Param('id') id:string){
+  const product = this.products.find((p) => p.id === parseInt(id));
+  if(!product) throw new NotFoundException(`product not found ${id}`, { description:"the product does not deleted" })
+
+ return  {message:'product was deleted'}
+}
+
+
+
 }
