@@ -78,7 +78,7 @@ export class ProductsController {
         description: 'this is description',
       });
     console.log(body);
-    return { message: 'product updated successfully wit id '+ id };
+    return { message: 'product updated successfully with id '+ id };
   }
 
 
