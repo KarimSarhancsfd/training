@@ -32,7 +32,7 @@ export class ReviewsController {
     getAllreviews(){
         return  this.reviews
     }
-
+     //post single element
     @Post()
     public createRview(@Body() body: CreateReviewDto){
         // console.log(body);
@@ -46,11 +46,23 @@ export class ReviewsController {
         this.reviews.push(newReview)
         return newReview
     }
+//add multiple array with multiple object
+//     @Post()
+// createMultipleReviews(@Body() body: CreateReviewDto[]){ 
+//     const newReviews: Reviews[] = body.map((item, index) => ({
+//         id: this.reviews.length + index + 1,
+//         products: item.products,
+//         review: item.review,
+//         rating: item.rating
+//     }));
+//     this.reviews.push(...newReviews);
+//     return newReviews;
+// }
 
 
     @Get('/:id')
     public getReviewById(@Param('id', ParseIntPipe) id: number){
-        const review = this.reviews.find((r) => r.id);
+        const review = this.reviews.find((r) => r.id === id);
         if (!review) {
             throw new NotFoundException ('Review not found', {description:"no reviews found"});
     }
