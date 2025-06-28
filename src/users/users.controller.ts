@@ -1,4 +1,4 @@
-import { Module,Get, Controller,Post,Put,Delete, NotFoundException, Param, Body, ParseIntPipe } from '@nestjs/common';
+import { Module,Get, Controller,Post,Put,Delete, NotFoundException, Param, Body, ParseIntPipe, BadRequestException } from '@nestjs/common';
 
 import { CreateUserDto } from './dtos/create-user.dto';
 
@@ -32,20 +32,23 @@ export class UsersController {
     createUser(@Body() body : CreateUserDto){
         const newUser:User = {
             id:this.user.length +1,
+            // name: body.name,
+            // email: body.email
             ...body
         };
         this.user.push(newUser);
         const role = this.getRoleFromEmail(newUser.email)
+        return { ...newUser, role};
 
     }
 
-    @Get(':id')
+    @Get('/:id')
     public GetSpecficUser(@Param('id', ParseIntPipe) id:number){
-        const user = this.user.find(u => u.id);
+        const user = this.user.find(u => u.id === id );
         if(!user){
             throw new NotFoundException(`User with id ${id} not found`)
         }
-        return this.user;
+        return user;
     }
 
 
@@ -63,15 +66,22 @@ export class UsersController {
   @Delete(":id")
   DeleteUser(@Param('id', ParseIntPipe) id:number){
     const user = this.user.find(u => u.id)
+ 
         if (!user) {
             throw new NotFoundException('User not found');
         }
-        return {message: "product deleted sucessfully"}
+        return user
     
   }
 
   private getRoleFromEmail(email: string): 'instructor' | 'student' {
-    return email.includes('instructor') ? 'instructor' : 'student';
+   if(email.includes('instructor')){
+    return 'instructor'
+   }else if (email.includes('student')){
+    return 'student'
+   }else {
+    throw new BadRequestException('Email must include role: "instructor" or "student"')
+   }
   }
 
 
