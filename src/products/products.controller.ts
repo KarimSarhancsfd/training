@@ -10,7 +10,9 @@ import {
   Req,
   Res,
   Header,
-  Headers
+  Headers,
+  UseGuards,
+  ParseIntPipe,// 'karim' ->throw a  // bad request error so it prevent the requset to talk to database query as it is a bade request  but if we didnot use it i will make a query to database and it will return an exception etc.. according to your exception handler you have made in eif condtion or anything else 
 } from '@nestjs/common';
 import {Request,Response} from "express"
 
@@ -63,6 +65,7 @@ export class ProductsController {
   // because it is not nest way to do it
   //in some actions we need to use it
   // like file upload or download or set to cokies and etc...
+  //it is just behinde the scence
 
 
 
@@ -100,7 +103,8 @@ export class ProductsController {
   // }
 
   @Get('/:id')
-  public getsingleProducts(@Param('id') id: string) {
+  public getsingleProducts(@Param('id',ParseIntPipe) id: string) {
+    console.log(typeof id);
     const product = this.products.find((p) => p.id === parseInt(id));
     if (!product)
       throw new NotFoundException(`product not found ${id}`, {
