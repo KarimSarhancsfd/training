@@ -13,6 +13,7 @@ import {
   Headers,
   UseGuards,
   ParseIntPipe,// 'karim' ->throw a  // bad request error so it prevent the requset to talk to database query as it is a bade request  but if we didnot use it i will make a query to database and it will return an exception etc.. according to your exception handler you have made in eif condtion or anything else 
+  ValidationPipe,
 } from '@nestjs/common';
 import {Request,Response} from "express"
 
@@ -72,6 +73,12 @@ export class ProductsController {
 
   @Post()
   public createProduct(@Body() body: CreateProductDto) {
+    //whitelist: true
+    // this will remove any property that is not defined in the dto
+    // forbidNonWhitelisted: true
+    // this will throw an error if any property is not defined in the dto
+    //and the controller will not be excuted or working 
+    //###########################
     //    console.log(body);
     //    return body;
     const newProduct: Products = {
@@ -79,6 +86,10 @@ export class ProductsController {
       title: body.title,
       price: body.price,
     };
+
+    if(body.price < 0){
+      throw new NotFoundException('price must be greater than 0',{cause:"must not negative"});}
+      console.log(body);
     this.products.push(newProduct);
     return newProduct;
   }
@@ -116,7 +127,7 @@ export class ProductsController {
   @Put(':id')
   public updateProduct(
     @Param('id',ParseIntPipe) id: string,
-    @Body() body: UpdateProductDto,
+    @Body( new ValidationPipe()) body: UpdateProductDto,
   ) {
     const product = this.products.find((p) => p.id === parseInt(id));
     if (!product)
