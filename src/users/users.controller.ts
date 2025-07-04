@@ -1,13 +1,16 @@
-import { Module,Get, Controller,Post,Put,Delete, NotFoundException, Param, Body, ParseIntPipe, BadRequestException } from '@nestjs/common';
+import { Module,Get, Controller,Post,Put,Delete, NotFoundException, Param, Body, ParseIntPipe, BadRequestException,ValidationPipe } from '@nestjs/common';
 
 import { CreateUserDto } from './dtos/create-user.dto';
 
 import {UpdateUserDto } from './dtos/update-user.dto'
 
+
+
+
 type User = {
     id:number;
-    name: string;
-    email: string;
+    name: string ;
+    email: string ;
 }
 
 @Controller("/api/users")
@@ -15,11 +18,13 @@ export class UsersController {
     // GET: http://localhost:5000/api/users
    // GET: ~/api/users
    private user:User[] = [
-    { id: 1, name: 'Alice', email: 'karim@gmail.com' },
-{ id: 2, name: 'Bob', email: 'bob@gmail.com' },
-{ id: 3, name: 'Charlie', email: 'charlie@gmail.com' },
+    { id: 1, name: 'Alice', email: 'kariminstructor@gmail.com' },
+{ id: 2, name: 'Bob', email: 'bobstudent@gmail.com' },
+{ id: 3, name: 'Charlie', email: 'charlieinstructor@gmail.com' },
    ]
 
+
+   
     @Get()
     public getAllUsers() {
         return  this.user.map(user =>{
@@ -29,7 +34,8 @@ export class UsersController {
     }
 
     @Post()
-    createUser(@Body() body : CreateUserDto){
+    createUser(@Body(new ValidationPipe({whitelist: true, forbidNonWhitelisted: true})) body : CreateUserDto){
+        
         const newUser:User = {
             id:this.user.length +1,
             // name: body.name,
